@@ -7,9 +7,9 @@
 {{--        </ul>--}}
 {{--    </div>--}}
 {{--@endif--}}
-@if (session('success'))
-    <div class="alert alert-success">
-        {!! session('success') !!}
+@if (session('message'))
+    <div class="alert alert-success alert-success-custom">
+        {!! session('message') !!}
     </div>
 @endif
 @if (session('error'))

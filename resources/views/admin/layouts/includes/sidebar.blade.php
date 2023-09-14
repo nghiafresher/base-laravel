@@ -50,13 +50,13 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="pages/layout/top-nav.html" class="nav-link">
+                            <a href="{{ route('admin.role.index') }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Vai trò</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="pages/layout/top-nav.html" class="nav-link">
+                            <a href="{{ route('admin.permission.index') }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Quyền</p>
                             </a>

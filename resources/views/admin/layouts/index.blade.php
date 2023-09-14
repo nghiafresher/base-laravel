@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="{{ base_assets('assets/AdminLTE-3.2.0/plugins/daterangepicker/daterangepicker.css') }}">
     <!-- summernote -->
     <link rel="stylesheet" href="{{ base_assets('assets/AdminLTE-3.2.0/plugins/summernote/summernote-bs4.min.css') }}">
+    <link rel="stylesheet" href="{{ base_assets('assets/font-awesome-4.7/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ base_assets('assets/css/style.css') }}">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
