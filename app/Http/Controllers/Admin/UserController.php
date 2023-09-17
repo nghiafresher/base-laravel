@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Business\UserBusiness;
+use App\Services\UserService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\User\UserStoreRequest;
 use App\Http\Requests\Admin\User\UserUpdateRequest;
@@ -11,15 +11,17 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    protected $userBusiness;
-    public function __construct(UserBusiness $userBusiness)
+    public $userService;
+    public function __construct(UserService $userService)
     {
-        $this->userBusiness = $userBusiness;
+        $this->userService = $userService;
     }
 
-    public function index()
+    //
+    public function index(Request $request)
     {
-        $users = $this->userBusiness->getList([], [], DEFAULT_PER_PAGE);
+        $inputs = $request->all();
+        $users = $this->userService->getListUser($inputs);
         $data = [
             'users' => $users
         ];
@@ -46,7 +48,7 @@ class UserController extends Controller
     public function store(UserStoreRequest $request)
     {
         $inputs = $request->all();
-        $user = $this->userBusiness->storeUser($inputs);
+        $user = $this->userService->create($inputs);
         if($user) {
             return redirect()->back()->with('message', 'Thêm user thành công');
         }
@@ -61,7 +63,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $user = $this->userBusiness->findById($id);
+        $user = $this->userService->find($id);
         if(!$user) {
             abort(404);
         }
@@ -84,7 +86,7 @@ class UserController extends Controller
     public function update(UserUpdateRequest $request, $id)
     {
         $inputs = $request->all();
-        $user = $this->userBusiness->updateUser($inputs, $id);
+        $user = $this->userService->updateUser($inputs, $id);
         if($user) {
             return redirect()->route('admin.user.index')->with('message', 'Cập nhật user thành công');
         }

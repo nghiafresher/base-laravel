@@ -7,22 +7,14 @@ use App\Models\User;
 class UserRepository extends BaseRepository
 {
 
-    public function getFieldsSearchable()
+    public function __construct(User $model)
     {
-        // TODO: Implement getFieldsSearchable() method.
-    }
-    /**
-     * Model
-     *
-     * @return string
-     */
-    public function model()
-    {
-        return User::class;
+        $this->model = $model;
     }
 
-    public function getListUser(array $inputs)
+    public function getListUser($inputs)
     {
-
+        return $this->query($inputs)->paginate(self::PAGINATE);
     }
+
 }

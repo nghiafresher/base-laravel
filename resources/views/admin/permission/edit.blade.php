@@ -23,7 +23,7 @@
                             <div class="card-header">
                                 <h3 class="card-title">Sửa quyền</h3>
                             </div>
-                            @include('admin.permission.form')
+                            @include('admin.permission.form', ['models' => $models ?? null])
                         </div>
 
                     </div>

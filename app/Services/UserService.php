@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Business;
+namespace App\Services;
 
 use App\Repositories\UserRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class UserBusiness extends BaseBusiness
+class UserService extends BaseService
 {
     protected $repository;
     public function __construct(UserRepository $repository)
@@ -80,7 +80,7 @@ class UserBusiness extends BaseBusiness
             if(!empty($inputs['password'])) {
                 $dataUpdate['password'] = bcrypt($inputs['password']);
             }
-            $updated = $this->repository->update($dataUpdate, $id);
+            $updated = $this->repository->update($user, $dataUpdate);
             DB::commit();
 
             return $updated;

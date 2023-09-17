@@ -2,282 +2,345 @@
 
 namespace App\Repositories;
 
-use Illuminate\Container\Container as Application;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 abstract class BaseRepository
 {
+    const PAGINATE = 10;
     /**
-     * @var Model
+     * @var     Model
      */
     protected $model;
 
     /**
-     * @var Application
-     */
-    protected $app;
-
-    /**
-     * @param Application $app
+     * Get status
      *
-     * @throws \Exception
+     * @return  array
      */
-    public function __construct(Application $app)
+    public function statusTypes(): array
     {
-        $this->app = $app;
-        $this->makeModel();
+        return [];
     }
 
     /**
-     * Get searchable fields array
+     * Get query model.
      *
-     * @return array
+     * @param   array $params
+     * @param   array $relations
+     * @param   array $relationCounts
+     * @param   array $selectable
+     * @return  Builder
      */
-    abstract public function getFieldsSearchable();
-
-    /**
-     * Configure the Model
-     *
-     * @return string
-     */
-    abstract public function model();
-
-    /**
-     * Make Model instance
-     *
-     * @throws \Exception
-     *
-     * @return Model
-     */
-    public function makeModel()
+    public function query(array $params, array $relations = [], array $relationCounts = [], array $selectable = ['*']): Builder
     {
-        $model = $this->app->make($this->model());
+        $params = collect($params);
 
-        if (!$model instanceof Model) {
-            throw new \Exception("Class {$this->model()} must be an instance of Illuminate\\Database\\Eloquent\\Model");
+        // Select list column
+        $entities = $this->model->select(!empty($selectable) ? $selectable : ($this->model->selectable ?? ['*']));
+
+        // Load relation counts
+        if (count($relationCounts)) {
+            $entities = $entities->withCount($relationCounts);
         }
 
-        return $this->model = $model;
-    }
+        // Load relations
+        if (count($relations)) {
+            $entities = $entities->with($relations);
+        }
 
-    /**
-     * Paginate records for scaffold.
-     *
-     * @param int $perPage
-     * @param array $columns
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-     */
-    public function paginate($perPage, $columns = ['*'])
-    {
-        $query = $this->allQuery();
-
-        return $query->paginate($perPage, $columns);
-    }
-
-    /**
-     * Build a query for retrieving all records.
-     *
-     * @param array $search
-     * @param int|null $skip
-     * @param int|null $limit
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function allQuery($search = [], $skip = null, $limit = null)
-    {
-        $query = $this->model->newQuery();
-
-        if (count($search)) {
-            foreach($search as $key => $value) {
-                if (in_array($key, $this->getFieldsSearchable())) {
-                    $query->where($key, $value);
+        // Filter list by condition
+        if (count($params) && method_exists($this, 'mergeQuery')) {
+            foreach ($params as $key => $value) {
+                if ($value != null) {
+                    $entities = $this->mergeQuery($entities, $key, $value);
                 }
             }
         }
 
-        if (!is_null($skip)) {
-            $query->skip($skip);
-        }
-
-        if (!is_null($limit)) {
-            $query->limit($limit);
-        }
-
-        return $query;
-    }
-
-    /**
-     * Retrieve all records with given filter criteria
-     *
-     * @param array $search
-     * @param int|null $skip
-     * @param int|null $limit
-     * @param array $columns
-     *
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
-     */
-    public function all($search = [], $skip = null, $limit = null, $columns = ['*'])
-    {
-        $query = $this->allQuery($search, $skip, $limit);
-
-        return $query->get($columns);
-    }
-
-    /**
-     * Create model record
-     *
-     * @param array $input
-     *
-     * @return Model
-     */
-    public function create($input)
-    {
-        $model = $this->model->newInstance($input);
-
-        $model->save();
-
-        return $model;
-    }
-
-    /**
-     * Find model record for given id
-     *
-     * @param int $id
-     * @param array $columns
-     *
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model|null
-     */
-    public function find($id, $columns = ['*'])
-    {
-        $query = $this->model->newQuery();
-
-        return $query->find($id, $columns);
-    }
-
-    /**
-     * Update model record for given id
-     *
-     * @param array $input
-     * @param int $id
-     *
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model
-     */
-    public function update($input, $id)
-    {
-        $query = $this->model->newQuery();
-
-        $model = $query->findOrFail($id);
-
-        $model->fill($input);
-
-        $model->save();
-
-        return $model;
-    }
-
-    /**
-     * @param int $id
-     *
-     * @throws \Exception
-     *
-     * @return bool|mixed|null
-     */
-    public function delete($id)
-    {
-        $query = $this->model->newQuery();
-
-        $model = $query->findOrFail($id);
-
-        return $model->delete();
-    }
-
-
-    /**
-     * Get sql query with binding value for debug.
-     * @param object $model eloquent object to get data from mysql
-     *
-     * @return string sql query
-     */
-    public function getSql($model)
-    {
-        $replace = function ($sql, $bindings) {
-            $needle = '?';
-            foreach ($bindings as $replace) {
-                $pos = strpos($sql, $needle);
-                if ($pos !== false) {
-                    $sql = substr_replace($sql, $replace, $pos, strlen($needle));
-                }
-            }
-            return $sql;
-        };
-        $sql = $replace($model->toSql(), $model->getBindings());
-        return $sql;
-    }
-
-    /**
-     * get user id with email
-     * @param string $email
-     *
-     * @throws \Exception
-     * @return int $id
-     */
-    public function getUserIdWithEmail($email) {
-        $query = $this->model->newQuery();
-
-        $model = $query->where('email', $email)->pluck('id')->toArray();
-
-        return $model;
-    }
-
-    /**
-     * Get list item by input conditions
-     *
-     * @param array $conditions
-     * Condition array format like:
-     * $conditions = [
-     *          0 => [
-     *              'field_name' => fieldName1,
-     *              'value'      => value,
-     *              'type'       => 'string', // type of field to build where clause
-     *          ],
-     *          1 => [
-     *              'field_name' => fieldName2,
-     *              'value'      => value,
-     *              'type'       => 'number', // type of field to build where clause
-     *          ],
-     * ]
-     * @param array $relations
-     * @param int $perPage
-     * @param string $orderedField
-     * @param string $typeSort
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-     */
-    public function getList(
-        array $conditions = [],
-        array $relations = [],
-        int $perPage = DEFAULT_PER_PAGE,
-        string $orderedField = '',
-        string $typeSort = DESC
-    )
-    {
-        $query = $this->model->newQuery();
-        $query->with($relations);
-        $tableName = $this->model->getTable();
-        foreach ($conditions as $column) {
-            $fieldName = $tableName.'.'.$column['field_name'];
-            if ($column['type'] == 'string') {
-                $query->where($fieldName, 'like', '%' . $column['value'] . '%');
+        // Order list
+        $orderBy = $this->model->getKeyName();
+        if ($params->has('sort')) {
+            if (!empty($this->model->sortable) && in_array($params['sort'], $this->model->sortable)) {
+                $orderBy = $params['sort'];
             } else {
-                $query->where($fieldName, $column['value']);
+                $fields = DB::getSchemaBuilder()->getColumnListing($this->model->getTable());
+                if (in_array($params['sort'], $fields)) {
+                    $orderBy = $params['sort'];
+                }
             }
         }
 
-        $orderName = $tableName.'.id';
-        if ($orderedField) {
-            $orderName = $orderedField;
-        }
-        $query->orderBy($orderName, $typeSort);
+        return $entities->orderBy($orderBy, $params->has('sortType') && $params['sortType'] == SORT_TYPE_ASC ? SORT_TYPE_ASC : SORT_TYPE_DESC);
+    }
 
-        return $query->paginate($perPage);
+    /**
+     * Get query model.
+     *
+     * @param   array $params
+     * @param   array $relations
+     * @param   array $relationCounts
+     * @param   array $selectable
+     * @return  Collection
+     */
+    public function queryCollection(array $params, array $relations = [], array $relationCounts = [], array $selectable = ['*']): Collection
+    {
+        return $this->query($params, $relations, $relationCounts, $selectable)->get();
+    }
+
+    /**
+     * Get query model.
+     *
+     * @param   array $params
+     * @param   array $relations
+     * @param   array $relationCounts
+     * @param   array $selectable
+     * @return  LengthAwarePaginator
+     */
+    public function queryPaginate(array $params, array $relations = [], array $relationCounts = [], array $selectable = ['*']): LengthAwarePaginator
+    {
+        // Limit result
+        $limit = $params['limit'] ?? self::PAGINATE;
+
+        return $this->query($params, $relations, $relationCounts, $selectable)->paginate($limit);
+    }
+
+    /**
+     * Create model.
+     *
+     * @param   array $data
+     * @return  Model
+     */
+    public function create(array $data = []): Model
+    {
+        return $this->model->create($data);
+    }
+
+    /**
+     * Get model detail.
+     *
+     * @param   Model $entity
+     * @param   array $relations
+     * @return  Model
+     */
+    public function show(Model $entity, array $relations = []): Model
+    {
+        if (count($relations)) {
+            return $entity->load($relations);
+        }
+
+        return $entity;
+    }
+
+    /**
+     * Update model.
+     *
+     * @param   Model $entity
+     * @param   array $data
+     *
+     * @return  Model
+     */
+    public function update(Model $entity, array $data = []): Model
+    {
+        $entity->update($data);
+
+        return $entity;
+    }
+
+    /**
+     * Update By ID.
+     *
+     * @param   int $id
+     * @param   array $data
+     *
+     * @return  Model
+     */
+    public function updateById(int $id, array $data = []): Model
+    {
+        return $this->model->updateOrCreate([
+            'id' => $id,
+        ], $data);
+    }
+
+    /**
+     * Update or create model.
+     *
+     * @param   array $condition
+     * @param   array $data
+     * @return  Model
+     */
+    public function updateOrCreate(array $condition = [], array $data = []): Model
+    {
+        return $this->model->updateOrCreate($condition, $data);
+    }
+
+    /**
+     * Delete model.
+     *
+     * @param   Model $entity
+     * @return  boolean|null
+     */
+    public function delete(Model $entity): ?bool
+    {
+        return $entity->delete();
+    }
+
+    /**
+     * Synchro model relation with data.
+     *
+     * @param   Model $entity
+     * @param   mixed $relation
+     * @param   array $data
+     * @return  void
+     */
+    public function sync(Model $entity, $relation, array $data = []): void
+    {
+        $entity->$relation()->sync($data);
+    }
+
+    /**
+     * Insert multiple values.
+     *
+     * @param   mixed $data
+     * @return  integer
+     */
+    public function insert($data): int
+    {
+        $data = array_map(function ($item) {
+            $item['created_at'] = Carbon::now()->format('Y-m-d H:i:s');
+            $item['updated_at'] = Carbon::now()->format('Y-m-d H:i:s');
+
+            return $item;
+        }, $data);
+
+        return $this->model->insert($data);
+    }
+
+    /**
+     * Find model by id.
+     *
+     * @param   mixed $id
+     * @param   array $relations
+     * @return  Model
+     */
+    public function findOrFail($id, array $relations = []): Model
+    {
+        $entity = $this->model->findOrFail($id);
+
+        if (count($relations)) {
+            return $entity->load($relations);
+        }
+
+        return $entity;
+    }
+
+    /**
+     * Find model by id.
+     *
+     * @param   mixed $id
+     * @param   array $relations
+     * @return  Model|null
+     */
+    public function find($id, array $relations = []): ?Model
+    {
+        $entity = $this->model->find($id);
+
+        if (count($relations)) {
+            return $entity->load($relations);
+        }
+
+        return $entity;
+    }
+
+    /**
+     * Find many model by id.
+     *
+     * @param   array $ids
+     * @param   array $relations
+     * @return  Collection
+     */
+    public function findMany(array $ids, array $relations = []): Collection
+    {
+        $entity = $this->model->findMany($ids);
+
+        if (count($relations)) {
+            return $entity->load($relations);
+        }
+
+        return $entity;
+    }
+
+    /**
+     * Find by condition .
+     *
+     * @param   mixed $condition
+     * @param   array $relations
+     *
+     * @return  object
+     */
+    public function findByCondition($condition, array $relations = [], array $select = []): object
+    {
+        $entities = $this->model->select(count($select) ? $select : ($this->model->selectable ?? '*'));
+
+        if (count($relations)) {
+            // If there is where has
+            if (isset($relations['whereHas']) && count($relations['whereHas'])) {
+                foreach ($relations['whereHas'] as $key => $item) {
+                    $entities->wherehas($key, $item);
+                }
+
+                unset($relations['whereHas']);
+            }
+
+            // If there is or where has
+            if (isset($relations['orWhereHas']) && count($relations['orWhereHas'])) {
+                foreach ($relations['orWhereHas'] as $key => $item) {
+                    $entities->orWhereHas($key, $item);
+                }
+                unset($relations['orWhereHas']);
+            }
+
+            $entities = $entities->with($relations);
+        }
+        if (count($condition)) {
+            foreach ($condition as $key => $value) {
+                $entities = $this->mergeQuery($entities, $key, $value);
+            }
+        }
+
+        return $entities;
+    }
+
+    /**
+     * Get model's fillable attribute.
+     *
+     * @return  array
+     */
+    public function getFillable(): array
+    {
+        return $this->model->getFillable();
+    }
+
+    /**
+     * Batch update.
+     *
+     * @param array $condition
+     * @param array $data
+     * @return mixed
+     */
+    public function batchUpdate(array $condition, array $data): mixed
+    {
+        $model = $this->model;
+        if (count($condition) && method_exists($this, 'mergeQuery')) {
+            foreach ($condition as $key => $value) {
+                $model = $this->mergeQuery($model, $key, $value);
+            }
+        }
+
+        return $model->update($data);
     }
 }

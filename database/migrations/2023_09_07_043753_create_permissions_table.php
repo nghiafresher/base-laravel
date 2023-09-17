@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('display_name');
+            $table->string('model_name', 50);
             $table->string('description')->nullable();
         });
     }

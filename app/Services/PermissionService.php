@@ -1,9 +1,10 @@
 <?php
-namespace App\Business;
+namespace App\Services;
 
 use App\Repositories\PermissionRepository;
+use App\Services\BaseService;
 
-class PermissionBusiness extends BaseBusiness
+class PermissionService extends BaseService
 {
     protected $repository;
     public function __construct(PermissionRepository $repository)

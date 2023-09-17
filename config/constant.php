@@ -3,5 +3,5 @@
 const DEFAULT_PER_PAGE = 15;
 
 // common
-const ASC = 'asc';
-const DESC = 'desc';
+const SORT_TYPE_ASC = 'asc';
+const SORT_TYPE_DESC = 'desc';

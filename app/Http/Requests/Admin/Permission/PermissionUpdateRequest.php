@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Permission;
+namespace App\Http\Requests\Admin\Permission;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -11,7 +11,7 @@ class PermissionUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,8 +22,10 @@ class PermissionUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'display_name' => 'required|string|max:255',
-            'description' => 'string|max:255',
+            'name' => 'required|max:255|unique:permissions,name,'.$this->id,
+            'display_name' => 'required|max:255',
+            'model_name' => 'required|max:255',
+            'description' => 'nullable|max:255',
         ];
     }
 }

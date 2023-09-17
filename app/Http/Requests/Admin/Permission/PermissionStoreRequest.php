@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Permission;
+namespace App\Http\Requests\Admin\Permission;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -11,7 +11,7 @@ class PermissionStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class PermissionStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|max:255|unique:permissions,name',
+            'display_name' => 'required|max:255',
+            'model_name' => 'required|max:255',
+            'description' => 'nullable|max:255',
         ];
     }
 }

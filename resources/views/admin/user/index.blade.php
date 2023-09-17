@@ -58,7 +58,7 @@
                                                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                                                 </a>
                                                 <a href="" title="Xóa">
-                                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                                    <i class="fa fa-trash text-danger" aria-hidden="true"></i>
                                                 </a>
                                             </td>
                                         </tr>

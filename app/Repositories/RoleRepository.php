@@ -6,20 +6,9 @@ use App\Models\Permission;
 
 class RoleRepository extends BaseRepository
 {
-
-    public function getFieldsSearchable()
+    public function __construct(Role $role)
     {
-        // TODO: Implement getFieldsSearchable() method.
+        $this->model = $role;
     }
-    /**
-     * Model
-     *
-     * @return string
-     */
-    public function model()
-    {
-        return Permission::class;
-    }
-
 
 }
