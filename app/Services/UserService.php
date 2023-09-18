@@ -61,18 +61,14 @@ class UserService extends BaseService
     /**
      * Update user
      *
+     * @param $user
      * @param $inputs
-     * @param $id
      * @return false|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model
      */
-    public function updateUser($inputs, $id)
+    public function updateUser($user, $inputs)
     {
         try {
             DB::beginTransaction();
-            $user = $this->repository->find($id);
-            if (!$user) {
-                return false;
-            }
             $dataUpdate = [
                 'name' => $inputs['name'],
                 'email' => $inputs['email'],

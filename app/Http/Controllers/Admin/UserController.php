@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\User;
 use App\Services\RoleService;
 use App\Services\UserService;
 use App\Http\Controllers\Controller;
@@ -67,13 +68,13 @@ class UserController extends Controller
      * @param $id
      * @return View
      */
-    public function edit($id)
+    public function edit(User $user)
     {
-        $user = $this->userService->find($id, ['roles']);
         if(!$user) {
             abort(404);
         }
-        $routeForm = route('admin.user.update', $id);
+        $user->load(['roles']);
+        $routeForm = route('admin.user.update', $user->id);
         $roles = $this->roleService->list();
         $data = [
             'user' => $user,
@@ -91,10 +92,13 @@ class UserController extends Controller
      * @param $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(UserUpdateRequest $request, $id)
+    public function update(UserUpdateRequest $request, User $user)
     {
+        if(!$user) {
+            abort(404);
+        }
         $inputs = $request->all();
-        $user = $this->userService->updateUser($inputs, $id);
+        $user = $this->userService->updateUser($user, $inputs);
         if($user) {
             return redirect()->route('admin.user.index')->with('message', 'Cập nhật user thành công');
         }

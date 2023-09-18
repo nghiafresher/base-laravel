@@ -23,7 +23,7 @@ class UserUpdateRequest extends FormRequest
     {
         return [
             'name' => 'required|max:255',
-            'email' => 'required|max:255|email|unique:users,email,'.$this->id,
+            'email' => 'required|max:255|email|unique:users,email,'.$this->user->id,
             'password' => 'required_with:re_password|same:re_password',
             're_password' => 'required_with:password|same:password',
             'phone' => ['nullable', 'max:20', 'regex:/^(0)[0-9]{9}$/'],

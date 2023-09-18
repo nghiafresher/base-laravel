@@ -49,16 +49,16 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach($users as $user)
+                                    @foreach($users as $model)
                                         <tr>
-                                            <td>{{ $user->id }}</td>
-                                            <td>{{ $user->name }}</td>
-                                            <td>{{ $user->email }}</td>
-                                            <td>{{ $user->phone }}</td>
-                                            <td>{{ $user->created_at }}</td>
+                                            <td>{{ $model->id }}</td>
+                                            <td>{{ $model->name }}</td>
+                                            <td>{{ $model->email }}</td>
+                                            <td>{{ $model->phone }}</td>
+                                            <td>{{ $model->created_at }}</td>
                                             <td>
-                                                @can('update', $user)
-                                                    <a href="{{ route('admin.user.edit', $user->id) }}" class="mr-2" title="Sửa">
+                                                @can('update', $model)
+                                                    <a href="{{ route('admin.user.edit', $model->id) }}" class="mr-2" title="Sửa">
                                                         <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                                                     </a>
                                                 @endcan
