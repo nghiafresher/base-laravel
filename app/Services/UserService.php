@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 class UserService extends BaseService
 {
     protected $repository;
+
     public function __construct(UserRepository $repository)
     {
         $this->repository = $repository;
@@ -69,7 +70,7 @@ class UserService extends BaseService
         try {
             DB::beginTransaction();
             $user = $this->repository->find($id);
-            if(!$user) {
+            if (!$user) {
                 return false;
             }
             $dataUpdate = [
@@ -77,13 +78,19 @@ class UserService extends BaseService
                 'email' => $inputs['email'],
                 'phone' => $inputs['phone'],
             ];
-            if(!empty($inputs['password'])) {
+            if (!empty($inputs['password'])) {
                 $dataUpdate['password'] = bcrypt($inputs['password']);
             }
-            $updated = $this->repository->update($user, $dataUpdate);
+            $model = $this->repository->update($user, $dataUpdate);
+            if ($model) {
+                $model->roles()->detach();
+                if (isset($inputs['role_ids']) && count($inputs['role_ids']) > 0) {
+                    $model->roles()->attach($inputs['role_ids']);
+                }
+            }
             DB::commit();
 
-            return $updated;
+            return $model;
         } catch (\Exception $e) {
             Log::error($e);
             DB::rollBack();

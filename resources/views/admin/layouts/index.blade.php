@@ -27,7 +27,9 @@
     <!-- summernote -->
     <link rel="stylesheet" href="{{ base_assets('assets/AdminLTE-3.2.0/plugins/summernote/summernote-bs4.min.css') }}">
     <link rel="stylesheet" href="{{ base_assets('assets/font-awesome-4.7/css/font-awesome.min.css') }}">
+    <!--select2-->
     <link rel="stylesheet" href="{{ base_assets('assets/AdminLTE-3.2.0/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ base_assets('assets/css/style.css') }}">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
@@ -74,9 +76,14 @@
 <script src="{{ base_assets('assets/AdminLTE-3.2.0/plugins/jqvmap/maps/jquery.vmap.usa.js') }}"></script>
 <!-- jQuery Knob Chart -->
 <script src="{{ base_assets('assets/AdminLTE-3.2.0/plugins/jquery-knob/jquery.knob.min.js') }}"></script>
+<script src="{{ base_assets('assets/AdminLTE-3.2.0/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js') }}"></script>
+
 <!-- daterangepicker -->
 <script src="{{ base_assets('assets/AdminLTE-3.2.0/plugins/moment/moment.min.js') }}"></script>
+<script src="{{ base_assets('assets/AdminLTE-3.2.0/plugins/inputmask/jquery.inputmask.min.js') }}"></script>
 <script src="{{ base_assets('assets/AdminLTE-3.2.0/plugins/daterangepicker/daterangepicker.js') }}"></script>
+<script src="{{ base_assets('assets/AdminLTE-3.2.0/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js') }}"></script>
+
 <!-- Tempusdominus Bootstrap 4 -->
 <script src="{{ base_assets('assets/AdminLTE-3.2.0/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
 <!-- Summernote -->
@@ -91,6 +98,8 @@
 <script src="{{ base_assets('assets/AdminLTE-3.2.0/dist/js/pages/dashboard.js') }}"></script>
 <!-- Select2 -->
 <script src="{{ base_assets('assets/AdminLTE-3.2.0/plugins/select2/js/select2.full.min.js') }}"></script>
+<!-- Bootstrap Switch -->
+<script src="{{ base_assets('assets/AdminLTE-3.2.0/plugins/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>
 <script>
     $(function () {
         //Initialize Select2 Elements

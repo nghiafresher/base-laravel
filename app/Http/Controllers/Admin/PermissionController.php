@@ -82,7 +82,7 @@ class PermissionController extends Controller
             $inputs = $request->all();
             $permission = $this->permissionBusiness->findById($id);
             if($permission) {
-                $this->permissionBusiness->update($id, $inputs);
+                $this->permissionBusiness->update($permission, $inputs);
                 return redirect()->route('admin.permission.index')->with('message', 'Cập nhật quyền thành công');
             }
 

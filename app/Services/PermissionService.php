@@ -14,7 +14,7 @@ class PermissionService extends BaseService
 
     public function getListData(array $inputs)
     {
-        return $this->repository->getList($inputs);
+        return $this->repository->getListData($inputs);
     }
 
     /**
@@ -26,5 +26,10 @@ class PermissionService extends BaseService
     public function findById($id)
     {
         return $this->repository->find($id);
+    }
+
+    public function getGroupPermissionData()
+    {
+        return $this->repository->getGroupPermissionData();
     }
 }

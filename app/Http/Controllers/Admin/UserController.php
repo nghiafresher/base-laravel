@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Services\RoleService;
 use App\Services\UserService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\User\UserStoreRequest;
@@ -12,9 +13,13 @@ use Illuminate\View\View;
 class UserController extends Controller
 {
     public $userService;
-    public function __construct(UserService $userService)
-    {
+    public $roleService;
+    public function __construct(
+        UserService $userService,
+        RoleService $roleService
+    ){
         $this->userService = $userService;
+        $this->roleService = $roleService;
     }
 
     //
@@ -50,7 +55,7 @@ class UserController extends Controller
         $inputs = $request->all();
         $user = $this->userService->create($inputs);
         if($user) {
-            return redirect()->back()->with('message', 'Thêm user thành công');
+            return redirect()->route('admin.user.index')->with('message', 'Thêm user thành công');
         }
         return redirect()->back()->withInput()->with('error', 'Thêm user lỗi');
     }
@@ -63,14 +68,16 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $user = $this->userService->find($id);
+        $user = $this->userService->find($id, ['roles']);
         if(!$user) {
             abort(404);
         }
         $routeForm = route('admin.user.update', $id);
+        $roles = $this->roleService->list();
         $data = [
             'user' => $user,
-            'routeForm' => $routeForm
+            'routeForm' => $routeForm,
+            'roles' => $roles
         ];
 
         return view('admin.user.edit', $data);

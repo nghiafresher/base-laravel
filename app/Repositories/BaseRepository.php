@@ -36,7 +36,7 @@ abstract class BaseRepository
      * @param   array $selectable
      * @return  Builder
      */
-    public function query(array $params, array $relations = [], array $relationCounts = [], array $selectable = ['*']): Builder
+    public function query(array $params = [], array $relations = [], array $relationCounts = [], array $selectable = ['*']): Builder
     {
         $params = collect($params);
 

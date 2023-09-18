@@ -15,21 +15,7 @@
 
         <section class="content">
             <div class="container-fluid">
-                <div class="row">
-
-                    <div class="col-md-6">
-
-                        <div class="card card-info">
-                            <div class="card-header">
-                                <h3 class="card-title">Sửa người dùng</h3>
-                            </div>
-                            @include('admin.user.form')
-                        </div>
-
-                    </div>
-
-                </div>
-
+                @include('admin.user.form', ['titlePage' => 'Sửa người dùng', 'user' => $user])
             </div>
         </section>
 

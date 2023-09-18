@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
 class Role extends BaseModel
 {
     use HasFactory;
@@ -19,4 +21,14 @@ class Role extends BaseModel
     ];
 
     public $timestamps = false;
+
+    /**
+     * Permissions
+     *
+     * @return BelongsToMany
+     */
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class, 'permission_roles', 'role_id', 'permission_id');
+    }
 }

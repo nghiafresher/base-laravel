@@ -33,7 +33,7 @@ abstract class BaseService
      * @param   array $selects
      * @return  Collection
      */
-    public function list(array $conditions, array $relations = [], array $relationCounts = [], array $selects = ['*']): Collection
+    public function list(array $conditions = [], array $relations = [], array $relationCounts = [], array $selects = ['*']): Collection
     {
         return $this->repository->queryCollection($conditions, $relations, $relationCounts, $selects);
     }

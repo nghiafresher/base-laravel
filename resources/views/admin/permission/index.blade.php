@@ -40,6 +40,7 @@
                                         <th>ID</th>
                                         <th>Định danh</th>
                                         <th>Tên hiển thị</th>
+                                        <th>Model</th>
                                         <th>Mô tả</th>
                                         <th>Hành động</th>
                                     </tr>
@@ -50,6 +51,7 @@
                                             <td>{{ $item->id }}</td>
                                             <td>{{ $item->name }}</td>
                                             <td>{{ $item->display_name }}</td>
+                                            <td>{{ $item->model_name }}</td>
                                             <td>{{ $item->description }}</td>
                                             <td>
                                                 <a href="{{ route('admin.permission.edit', $item->id) }}" class="mr-2" title="Sửa">
@@ -71,6 +73,5 @@
                 </div>
             </div>
         </section>
-
     </div>
 @endsection

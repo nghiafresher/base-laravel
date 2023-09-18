@@ -6,9 +6,9 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Người dùng</h1>
+                        <h1>Vai trò</h1>
 
-                        <a href="{{ route('admin.user.create') }}" type="button" class="btn btn-info btn-sm mt-3">Thêm mới</a>
+                        <a href="{{ route('admin.role.create') }}" type="button" class="btn btn-info btn-sm mt-3">Thêm mới</a>
                     </div>
                 </div>
             </div>
@@ -38,23 +38,23 @@
                                     <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Họ và tên</th>
-                                        <th>Email</th>
-                                        <th>Số điện thoại</th>
+                                        <th>Định danh</th>
+                                        <th>Tên hiển thị</th>
+                                        <th>Mô tả ngắn</th>
                                         <th>Ngày tạo</th>
                                         <th>Hành động</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach($users as $user)
+                                    @foreach($roles as $item)
                                         <tr>
-                                            <td>{{ $user->id }}</td>
-                                            <td>{{ $user->name }}</td>
-                                            <td>{{ $user->email }}</td>
-                                            <td>{{ $user->phone }}</td>
-                                            <td>{{ $user->created_at }}</td>
+                                            <td>{{ $item->id }}</td>
+                                            <td>{{ $item->name }}</td>
+                                            <td>{{ $item->display_name }}</td>
+                                            <td>{{ $item->description }}</td>
+                                            <td>{{ $item->created_at }}</td>
                                             <td>
-                                                <a href="{{ route('admin.user.edit', $user->id) }}" class="mr-2" title="Sửa">
+                                                <a href="{{ route('admin.role.edit', $item->id) }}" class="mr-2" title="Sửa">
                                                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                                                 </a>
                                                 <a href="" title="Xóa">

@@ -8,6 +8,9 @@ class PermissionRole extends BaseModel
 {
     use HasFactory;
 
+    protected $primaryKey = null;
+    public $incrementing = false;
+
     /**
      * The attributes that are mass assignable.
      *
