@@ -14,18 +14,10 @@
 
         <section class="content">
             <div class="container-fluid">
-                <div class="row">
-
-                    <div class="col-md-6">
-
-                        <div class="card card-info">
-                            <div class="card-header">
-                                <h3 class="card-title">Thêm người dùng</h3>
-                            </div>
-                            @include('admin.user.form', ['routeForm' => $routeForm])
-                        </div>
-                    </div>
-                </div>
+                @include('admin.user.form', [
+                    'titlePage' => 'Thêm người dùng',
+                    'routeForm' => $routeForm,
+                    'roles' => $roles])
             </div>
         </section>
 

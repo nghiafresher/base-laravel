@@ -41,7 +41,8 @@ class UserController extends Controller
     public function create()
     {
         $routeForm = route('admin.user.store');
-        return view('admin.user.create', compact('routeForm'));
+        $roles = $this->roleService->list();
+        return view('admin.user.create', compact('routeForm','roles'));
     }
 
     /**

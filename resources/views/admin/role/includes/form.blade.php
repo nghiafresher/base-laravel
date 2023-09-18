@@ -1,7 +1,7 @@
 <div class="card-body">
     <div class="form-group">
         <label for="name">Định danh<span class="text-danger">*</span></label>
-        <input type="text" name="name" value="{{ old('name', isset($role) ? $role->name : '') }}"
+        <input type="text" name="name" {{ isset($role) ? 'disabled' : '' }} value="{{ old('name', isset($role) ? $role->name : '') }}"
                class="form-control @error('name') is-invalid @enderror" id="name" placeholder="Định danh">
         @error('name')
         <div class="text-danger">{{ $message }}</div>

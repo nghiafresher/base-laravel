@@ -1,7 +1,6 @@
 <form action="{{ $routeForm }}" method="POST">
     @csrf
     <div class="row">
-
         <div class="col-md-6">
 
             <div class="card card-info">
@@ -72,7 +71,7 @@
                         @foreach($roles as $role)
                             @php
                                 $checked = false;
-                                if($user && $user->roles) {
+                                if(isset($user) && $user->roles) {
                                     if($user->roles->contains('id', $role->id)) {
                                         $checked = true;
                                     }

@@ -3,7 +3,7 @@
     <div class="card-body">
         <div class="form-group">
             <label for="name">Định danh<span class="text-danger">*</span></label>
-            <input type="text" name="name" value="{{ old('name', isset($permission) ? $permission->name : '') }}" class="form-control @error('name') is-invalid @enderror" id="name" placeholder="Họ và tên">
+            <input type="text" name="name" {{ isset($permission) ? 'disabled' : '' }} value="{{ old('name', isset($permission) ? $permission->name : '') }}" class="form-control @error('name') is-invalid @enderror" id="name" placeholder="Họ và tên">
             @error('name')
                 <div class="text-danger">{{ $message }}</div>
             @enderror

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Permission;
+use App\Models\User;
 use App\Services\PermissionService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Permission\PermissionStoreRequest;
@@ -22,6 +24,7 @@ class PermissionController extends Controller
 
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Permission::class);
         $inputs = $request->all();
         $permissions = $this->permissionBusiness->getListData($inputs);
         return view('admin.permission.index', compact('permissions'));
@@ -65,27 +68,28 @@ class PermissionController extends Controller
      * @param $id
      * @return View
      */
-    public function edit($id)
+    public function edit(Permission $permission)
     {
-        $permission = $this->permissionBusiness->findById($id);
+//        $this->authorize('update', $permission);
         $models = $this->models;
         if(!$permission) {
             abort(404);
         }
-        $routeForm = route('admin.permission.update', $id);
+        $routeForm = route('admin.permission.update', $permission->id);
         return view('admin.permission.edit', compact('routeForm', 'permission', 'models'));
     }
 
-    public function update(PermissionUpdateRequest $request, $id)
+    public function update(PermissionUpdateRequest $request, Permission $permission)
     {
         try {
             $inputs = $request->all();
-            $permission = $this->permissionBusiness->findById($id);
             if($permission) {
-                $this->permissionBusiness->update($permission, $inputs);
+                $this->permissionBusiness->update($permission, [
+                    'model_name' => $inputs['model_name'],
+                    'description' => $inputs['description'],
+                ]);
                 return redirect()->route('admin.permission.index')->with('message', 'Cập nhật quyền thành công');
             }
-
         } catch (\Exception $e) {
             \Log::error($e);
         }

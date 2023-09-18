@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Role\RoleStoreRequest;
 use App\Http\Requests\Admin\Role\RoleUpdateRequest;
+use App\Models\Role;
 use App\Services\PermissionService;
 use App\Services\RoleService;
 use Illuminate\Http\Request;
@@ -75,25 +76,25 @@ class RoleController extends Controller
     /**
      * Edit user
      *
-     * @param $id
+     * @param Role $role
      * @return View
      */
-    public function edit($id): View
+    public function edit(Role $role): View
     {
-        $role = $this->roleService->find($id, ['permissions']);
         if(!$role) {
             abort(404);
         }
+        $role->load(['permissions']);
         $permissions = $this->permissionService->getGroupPermissionData();
-        $routeForm = route('admin.role.update', $id);
+        $routeForm = route('admin.role.update', $role->id);
+
         return view('admin.role.edit', compact('routeForm', 'permissions', 'role'));
     }
 
-    public function update(RoleUpdateRequest $request, $id)
+    public function update(RoleUpdateRequest $request, Role $role)
     {
         try {
             $inputs = $request->all();
-            $role = $this->roleService->find($id, ['permissions']);
             if($role) {
                 $this->roleService->updateRole($role, $inputs);
                 return redirect()->route('admin.role.index')->with('message', 'Cập nhật vai trò thành công');

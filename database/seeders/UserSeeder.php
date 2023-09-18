@@ -13,67 +13,93 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('users')->insert([
+            'name' => 'admin',
+            'email' => 'admin@admin.com',
+            'phone' => '0123456789',
+            'password' => bcrypt(12345678)
+        ]);
+
+        DB::table('roles')->insert([
+            'name' => 'admin',
+            'display_name' => 'Super Admin',
+        ]);
         //permissions
         DB::table('permissions')->insert([
             [
                 'name' => 'user-list',
                 'display_name' => 'Người dùng',
+                'model_name' => 'User'
             ],
             [
                 'name' => 'user-show',
                 'display_name' => 'Chi tiết người dùng',
+                'model_name' => 'User'
             ],
             [
                 'name' => 'user-create',
                 'display_name' => 'Thêm người dùng',
+                'model_name' => 'User'
             ],
             [
                 'name' => 'user-edit',
                 'display_name' => 'Sửa người dùng',
+                'model_name' => 'User'
             ],
             [
                 'name' => 'user-delete',
                 'display_name' => 'Xóa người dùng',
+                'model_name' => 'User'
             ],
             [
                 'name' => 'role-list',
                 'display_name' => 'Vai trò',
+                'model_name' => 'Role'
             ],
             [
                 'name' => 'role-show',
                 'display_name' => 'Chi tiết vai trò',
+                'model_name' => 'Role'
             ],
             [
                 'name' => 'role-create',
                 'display_name' => 'Thêm vai trò',
+                'model_name' => 'Role'
             ],
             [
                 'name' => 'role-edit',
                 'display_name' => 'Sửa vai trò',
+                'model_name' => 'Role'
             ],
             [
                 'name' => 'role-delete',
                 'display_name' => 'Xóa vai trò',
+                'model_name' => 'Role'
             ],
             [
                 'name' => 'permission-list',
                 'display_name' => 'Quyền',
+                'model_name' => 'Permission'
             ],
             [
                 'name' => 'permission-show',
                 'display_name' => 'Chi tiết quyền',
+                'model_name' => 'Permission'
             ],
             [
                 'name' => 'permission-create',
                 'display_name' => 'Thêm quyền',
+                'model_name' => 'Permission'
             ],
             [
                 'name' => 'permission-edit',
                 'display_name' => 'Sửa quyền',
+                'model_name' => 'Permission'
             ],
             [
                 'name' => 'permission-delete',
                 'display_name' => 'Xóa quyền',
+                'model_name' => 'Permission'
             ],
         ]);
     }
