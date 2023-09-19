@@ -21,7 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'phone'
+        'phone',
+        'is_super_admin'
     ];
 
     /**
@@ -43,4 +44,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    const IS_SUPER_ADMIN = 1;
+
+    /**
+     * IsSuperAdmin
+     *
+     * @return bool
+     */
+    public function isSuperAdmin()
+    {
+        return $this->is_super_admin == self::IS_SUPER_ADMIN;
+    }
 }

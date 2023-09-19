@@ -79,7 +79,7 @@
                             @endphp
                             <div class="form-group">
                                 <input type="checkbox" name="role_ids[]" {{ $checked ? 'checked' : '' }} value="{{ $role->id }}" data-bootstrap-switch data-on-color="success">
-                                <label class="ml-1" for="name">{{ $role->name }}</label>
+                                <label class="ml-1" for="name">{{ $role->name }} - {{ $role->display_name }}</label>
                             </div>
                         @endforeach
 

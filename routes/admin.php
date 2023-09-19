@@ -24,7 +24,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
 
         //user
         Route::prefix('user')->as('user.')->group(function () {
-            Route::get('/', [UserController::class, 'index'])->name('index')->can('viewAny', User::class);;
+            Route::get('/', [UserController::class, 'index'])->name('index')->can('viewAny', User::class);
             Route::get('/create', [UserController::class, 'create'])->name('create')->can('create', User::class);
             Route::post('/store', [UserController::class, 'store'])->name('store')->can('create', User::class);
             Route::get('/edit/{user}', [UserController::class, 'edit'])->name('edit')->can('update', 'user');

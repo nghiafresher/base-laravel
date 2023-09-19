@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -14,15 +15,31 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         DB::table('users')->insert([
-            'name' => 'admin',
-            'email' => 'admin@admin.com',
-            'phone' => '0123456789',
-            'password' => bcrypt(12345678)
+            [
+                'name' => 'admin',
+                'email' => 'admin@admin.com',
+                'is_super_admin' => User::IS_SUPER_ADMIN,
+                'phone' => '0123456789',
+                'password' => bcrypt(12345678)
+            ],
+            [
+                'name' => 'dev',
+                'email' => 'dev@dev.com',
+                'is_super_admin' => 0,
+                'phone' => '0913134567',
+                'password' => bcrypt(12345678)
+            ]
         ]);
 
         DB::table('roles')->insert([
-            'name' => 'admin',
-            'display_name' => 'Super Admin',
+            [
+                'name' => 'admin',
+                'display_name' => 'Super Admin',
+            ],
+            [
+                'name' => 'ctv',
+                'display_name' => 'Công tác viên',
+            ]
         ]);
         //permissions
         DB::table('permissions')->insert([
